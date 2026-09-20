@@ -1,0 +1,5 @@
+# Runtime deps (or: pip install -e .)
+strands-agents[ollama,litellm]>=1.0
+fastapi>=0.110
+uvicorn>=0.29
+python-dotenv>=1.0

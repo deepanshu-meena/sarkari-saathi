@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Sarkari Saathi - deterministic eligibility API (Lambda + HTTP API). Free-tier friendly.
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 256
+    Runtime: python3.12
+
+Resources:
+  EligibilityFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: saathi.lambda_handler.handler
+      Events:
+        Schemes:
+          Type: HttpApi
+          Properties: { Path: /schemes, Method: GET }
+        Eligibility:
+          Type: HttpApi
+          Properties: { Path: /eligibility, Method: POST }
+
+Outputs:
+  ApiUrl:
+    Description: Base URL of the HTTP API
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"

@@ -1,0 +1,168 @@
+{
+  "_meta": {
+    "disclaimer": "Illustrative, simplified summary of central government schemes for a hackathon demo. Criteria and amounts change; always confirm on the official portal before applying.",
+    "last_reviewed": "2026-09"
+  },
+  "schemes": [
+    {
+      "id": "pm-kisan",
+      "name": "PM-KISAN",
+      "category": "Agriculture",
+      "benefit": "Income support of Rs 6,000 per year in three instalments, paid to the bank account.",
+      "rules": {"all": [
+        {"field": "occupation", "op": "eq", "value": "farmer"},
+        {"field": "owns_land", "op": "is_true"}
+      ]},
+      "documents": ["Aadhaar", "Land ownership records", "Bank account (Aadhaar-linked)"],
+      "apply_url": "https://pmkisan.gov.in"
+    },
+    {
+      "id": "pm-jay",
+      "name": "Ayushman Bharat PM-JAY",
+      "category": "Health",
+      "benefit": "Health cover of up to Rs 5 lakh per family per year for hospitalisation at empanelled hospitals.",
+      "rules": {"any": [
+        {"field": "is_bpl", "op": "is_true"},
+        {"field": "age", "op": "gte", "value": 70}
+      ]},
+      "documents": ["Aadhaar", "Ration card or proof of eligibility", "Mobile number"],
+      "apply_url": "https://pmjay.gov.in"
+    },
+    {
+      "id": "pm-ujjwala",
+      "name": "PM Ujjwala Yojana",
+      "category": "Household",
+      "benefit": "LPG connection without deposit for women from eligible poor households.",
+      "rules": {"all": [
+        {"field": "gender", "op": "eq", "value": "female"},
+        {"field": "age", "op": "gte", "value": 18},
+        {"field": "is_bpl", "op": "is_true"}
+      ]},
+      "documents": ["Aadhaar", "BPL or ration card", "Bank account details", "Address proof"],
+      "apply_url": "https://www.pmuy.gov.in"
+    },
+    {
+      "id": "pmay",
+      "name": "Pradhan Mantri Awas Yojana (Housing for All)",
+      "category": "Housing",
+      "benefit": "Financial assistance / interest subsidy towards a pucca house for eligible households.",
+      "rules": {"all": [
+        {"field": "owns_pucca_house", "op": "is_false"},
+        {"field": "annual_family_income", "op": "lte", "value": 900000}
+      ]},
+      "documents": ["Aadhaar", "Income proof or certificate", "Bank account details", "Land / address proof"],
+      "apply_url": "https://pmaymis.gov.in"
+    },
+    {
+      "id": "atal-pension",
+      "name": "Atal Pension Yojana",
+      "category": "Pension",
+      "benefit": "Guaranteed monthly pension of Rs 1,000 to Rs 5,000 after age 60, based on contribution.",
+      "rules": {"all": [
+        {"field": "age", "op": "between", "value": [18, 40]},
+        {"field": "has_bank_account", "op": "is_true"}
+      ]},
+      "documents": ["Aadhaar", "Savings bank account", "Mobile number"],
+      "apply_url": "https://www.pfrda.org.in"
+    },
+    {
+      "id": "pmjjby",
+      "name": "PM Jeevan Jyoti Bima Yojana",
+      "category": "Insurance",
+      "benefit": "Renewable life cover of Rs 2 lakh for a low annual premium auto-debited from the bank account.",
+      "rules": {"all": [
+        {"field": "age", "op": "between", "value": [18, 50]},
+        {"field": "has_bank_account", "op": "is_true"}
+      ]},
+      "documents": ["Aadhaar", "Savings bank account with auto-debit consent"],
+      "apply_url": "https://jansuraksha.gov.in"
+    },
+    {
+      "id": "pmsby",
+      "name": "PM Suraksha Bima Yojana",
+      "category": "Insurance",
+      "benefit": "Accident insurance cover of Rs 2 lakh for a very low annual premium.",
+      "rules": {"all": [
+        {"field": "age", "op": "between", "value": [18, 70]},
+        {"field": "has_bank_account", "op": "is_true"}
+      ]},
+      "documents": ["Aadhaar", "Savings bank account with auto-debit consent"],
+      "apply_url": "https://jansuraksha.gov.in"
+    },
+    {
+      "id": "sukanya",
+      "name": "Sukanya Samriddhi Yojana",
+      "category": "Savings",
+      "benefit": "Small-savings account for a girl child with a government-notified interest rate and tax benefits.",
+      "rules": {"all": [
+        {"field": "has_girl_child_under_10", "op": "is_true"}
+      ]},
+      "documents": ["Girl child's birth certificate", "Parent / guardian ID and address proof"],
+      "apply_url": "https://www.indiapost.gov.in"
+    },
+    {
+      "id": "nsp-scholarship",
+      "name": "National Scholarship Portal (central scholarships)",
+      "category": "Education",
+      "benefit": "Central scholarships for students; eligibility and amounts vary by scheme and category.",
+      "rules": {"all": [
+        {"field": "is_student", "op": "is_true"},
+        {"field": "annual_family_income", "op": "lte", "value": 250000}
+      ]},
+      "documents": ["Aadhaar", "Income certificate", "Previous marksheet", "Bank account", "Caste certificate (if applicable)"],
+      "apply_url": "https://scholarships.gov.in"
+    },
+    {
+      "id": "pm-mudra",
+      "name": "PM MUDRA Yojana",
+      "category": "Livelihood",
+      "benefit": "Collateral-free loans for small businesses under the Shishu, Kishor and Tarun categories.",
+      "rules": {"all": [
+        {"field": "age", "op": "gte", "value": 18}
+      ], "any": [
+        {"field": "occupation", "op": "eq", "value": "self_employed"},
+        {"field": "wants_business", "op": "is_true"}
+      ]},
+      "documents": ["Aadhaar", "PAN", "Business plan / proof of business", "Bank statements"],
+      "apply_url": "https://www.mudra.org.in"
+    },
+    {
+      "id": "stand-up-india",
+      "name": "Stand-Up India",
+      "category": "Livelihood",
+      "benefit": "Bank loans for setting up a new enterprise, for women and SC/ST entrepreneurs.",
+      "rules": {"all": [
+        {"field": "age", "op": "gte", "value": 18},
+        {"field": "wants_business", "op": "is_true"}
+      ], "any": [
+        {"field": "gender", "op": "eq", "value": "female"},
+        {"field": "social_category", "op": "in", "value": ["sc", "st"]}
+      ]},
+      "documents": ["Aadhaar", "PAN", "Caste certificate (SC/ST applicants)", "Project report"],
+      "apply_url": "https://www.standupmitra.in"
+    },
+    {
+      "id": "pmkvy",
+      "name": "PM Kaushal Vikas Yojana (skill training)",
+      "category": "Skills",
+      "benefit": "Short-term skill training with assessment and certification.",
+      "rules": {"all": [
+        {"field": "age", "op": "between", "value": [15, 45]},
+        {"field": "occupation", "op": "eq", "value": "unemployed"}
+      ]},
+      "documents": ["Aadhaar", "Bank account", "Education certificates"],
+      "apply_url": "https://www.msde.gov.in"
+    },
+    {
+      "id": "pm-jan-dhan",
+      "name": "PM Jan Dhan Yojana",
+      "category": "Banking",
+      "benefit": "Zero-balance basic savings account with RuPay debit card and built-in accident cover.",
+      "rules": {"all": [
+        {"field": "has_bank_account", "op": "is_false"}
+      ]},
+      "documents": ["Aadhaar or other officially valid document", "Passport-size photo"],
+      "apply_url": "https://pmjdy.gov.in"
+    }
+  ]
+}

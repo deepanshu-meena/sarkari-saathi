@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sarkari Saathi</title>
+<style>
+  :root { --bg:#faf7f2; --card:#fff; --ink:#1d2433; --mut:#667085; --acc:#e4572e; --ok:#1a7f4b; --warn:#b7791f; --line:#e5e0d8; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151820; --card:#1e222c; --ink:#eef0f4; --mut:#9aa3b2; --line:#2c3240; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+  main { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { margin:.2em 0; } .sub { color:var(--mut); margin-top:0; }
+  .tabs { display:flex; gap:8px; margin:16px 0; }
+  .tabs button { flex:1; padding:10px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:10px; cursor:pointer; font-weight:600; }
+  .tabs button.on { background:var(--acc); color:#fff; border-color:var(--acc); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin:10px 0; }
+  form { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:10px; }
+  label { font-size:.85rem; color:var(--mut); display:flex; flex-direction:column; gap:4px; }
+  input, select, textarea { padding:9px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+  .go { grid-column: 1 / -1; padding:12px; background:var(--acc); color:#fff; border:0; border-radius:10px; font-weight:700; cursor:pointer; }
+  .badge { font-size:.72rem; padding:2px 8px; border-radius:99px; color:#fff; margin-left:6px; }
+  .ok { background:var(--ok); } .warn { background:var(--warn); }
+  .mut { color:var(--mut); font-size:.9rem; } a { color:var(--acc); }
+  #log { display:flex; flex-direction:column; gap:8px; min-height:200px; max-height:55vh; overflow:auto; }
+  .msg { padding:10px 12px; border-radius:12px; max-width:88%; white-space:pre-wrap; }
+  .me { align-self:flex-end; background:var(--acc); color:#fff; } .bot { align-self:flex-start; background:var(--card); border:1px solid var(--line); }
+  .row { display:flex; gap:8px; } .row textarea { flex:1; resize:none; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🇮🇳 Sarkari Saathi</h1>
+  <p class="sub">Find government schemes you may be eligible for. Your details are not stored.</p>
+  <div class="tabs">
+    <button id="t-form" class="on">Quick form</button>
+    <button id="t-chat">Chat (Hindi / English)</button>
+  </div>
+
+  <section id="p-form">
+    <form id="f" class="card">
+      <label>Age <input name="age" type="number" min="0" max="120"></label>
+      <label>Gender <select name="gender"><option value="">-</option><option>female</option><option>male</option><option>other</option></select></label>
+      <label>Occupation <select name="occupation"><option value="">-</option><option>farmer</option><option>student</option><option>self_employed</option><option>salaried</option><option>unemployed</option><option>homemaker</option><option>retired</option></select></label>
+      <label>Annual family income (₹) <input name="annual_family_income" type="number" min="0" step="1000"></label>
+      <label>Social category <select name="social_category"><option value="">-</option><option>general</option><option>obc</option><option>sc</option><option>st</option></select></label>
+      <label>Owns agricultural land <select name="owns_land" data-b><option value="">-</option><option value="true">Yes</option><option value="false">No</option></select></label>
+      <label>Owns a pucca house <select name="owns_pucca_house" data-b><option value="">-</option><option value="true">Yes</option><option value="false">No</option></select></label>
+      <label>BPL / poor-household ration card <select name="is_bpl" data-b><option value="">-</option><option value="true">Yes</option><option value="false">No</option></select></label>
+      <label>Has bank account <select name="has_bank_account" data-b><option value="">-</option><option value="true">Yes</option><option value="false">No</option></select></label>
+      <label>Girl child under 10 <select name="has_girl_child_under_10" data-b><option value="">-</option><option value="true">Yes</option><option value="false">No</option></select></label>
+      <label>Currently a student <select name="is_student" data-b><option value="">-</option><option value="true">Yes</option><option value="false">No</option></select></label>
+      <label>Want to start / grow a business <select name="wants_business" data-b><option value="">-</option><option value="true">Yes</option><option value="false">No</option></select></label>
+      <button class="go" type="submit">Find my schemes</button>
+    </form>
+    <div id="out"></div>
+  </section>
+
+  <section id="p-chat" class="hidden">
+    <div class="card"><div id="log"><div class="msg bot">Namaste! Tell me about yourself, e.g. "Main 34 saal ki kisan hoon, meri zameen hai aur ration card BPL hai."</div></div></div>
+    <div class="row"><textarea id="m" rows="2" placeholder="Type here…"></textarea><button class="go" id="send" style="grid-column:auto;padding:0 18px">Send</button></div>
+  </section>
+  <p class="mut">Simplified demo data. Always confirm eligibility and amounts on the official portal.</p>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const sid = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2));
+
+function show(tab) {
+  $("#p-form").classList.toggle("hidden", tab !== "form");
+  $("#p-chat").classList.toggle("hidden", tab !== "chat");
+  $("#t-form").classList.toggle("on", tab === "form");
+  $("#t-chat").classList.toggle("on", tab === "chat");
+}
+$("#t-form").onclick = () => show("form");
+$("#t-chat").onclick = () => show("chat");
+
+function card(m, badge, cls) {
+  return `<div class="card"><b>${esc(m.name)}</b><span class="badge ${cls}">${badge}</span>
+    <div class="mut">${esc(m.category)}</div><p>${esc(m.benefit)}</p>
+    <div class="mut"><b>Documents:</b> ${m.documents.map(esc).join(", ")}</div>
+    ${m.missing_fields.length ? `<div class="mut"><b>Still need:</b> ${m.missing_fields.map((f) => esc(f.replaceAll("_", " "))).join(", ")}</div>` : ""}
+    <p><a href="${esc(m.apply_url)}" target="_blank" rel="noopener">Official portal →</a></p></div>`;
+}
+
+$("#f").onsubmit = async (e) => {
+  e.preventDefault();
+  const body = {};
+  for (const el of e.target.elements) {
+    if (!el.name || el.value === "") continue;
+    body[el.name] = el.hasAttribute("data-b") ? el.value === "true" : el.type === "number" ? Number(el.value) : el.value;
+  }
+  const res = await fetch("/api/eligibility", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const d = await res.json();
+  $("#out").innerHTML =
+    `<h2>${d.eligible.length} eligible</h2>` + d.eligible.map((m) => card(m, "Eligible", "ok")).join("") +
+    (d.likely_need_more_info.length ? `<h2>Possibly eligible</h2><p class="mut">Fill in the missing fields to confirm.</p>` + d.likely_need_more_info.map((m) => card(m, "Need info", "warn")).join("") : "");
+};
+
+async function send() {
+  const text = $("#m").value.trim(); if (!text) return;
+  $("#m").value = ""; add("me", text); const wait = add("bot", "…");
+  try {
+    const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ session_id: sid, message: text }) });
+    const d = await r.json(); wait.textContent = r.ok ? d.reply : d.detail;
+  } catch { wait.textContent = "Network error. Try the quick form."; }
+}
+function add(who, text) { const d = document.createElement("div"); d.className = "msg " + who; d.textContent = text; $("#log").append(d); d.scrollIntoView(); return d; }
+$("#send").onclick = send;
+$("#m").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+</script>
+</body>
+</html>
